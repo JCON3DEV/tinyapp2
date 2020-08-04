@@ -36,6 +36,9 @@ app.get("/urls/new", (req, res) => {
 // Below accepts the form
 app.post("/urls", (req, res) => {
   console.log(req.body);  // Log the POST request body to the console
+  const idString = generateRandomString(6,arr);
+  // const longURL = urlDatabase[shortURL];
+  urlDatabase[idString] = req.body.longURL;
   res.send("Ok");         // Respond with 'Ok' (we will replace this)
 });
 //recently aded below;
