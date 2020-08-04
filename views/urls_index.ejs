@@ -38,11 +38,23 @@
         </tr>
       </thead>
       <tbody>
+        
+        
         <% for(let url in urls) { %>
-        <tr>
-          <!-- the below hyperlink is the website url using interpolation from ejs -->
-          <td><a href= "urls/<%= url %> " ><%= url %></a></td>
-          <td><%= urls[url] %></td>
+          <tr>
+            <!-- the below hyperlink is the website url using interpolation from ejs -->
+            <td><a href= "urls/<%= url %> " ><%= url %></a></td>
+            <td><%= urls[url] %></td>
+            <td>
+              <div class="form-example">
+                <form method="POST" action="/urls/<%= url %>/delete">
+                  <button type="submit" class="btn btn-danger" >
+                  Delete
+                  </button>
+                </form>
+              <!-- <input type="text" name="name" id="name" required> -->
+            </div>
+            </td>
         </tr>
         <% } %>
       </tbody>
