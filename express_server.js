@@ -18,6 +18,10 @@ app.get("/urls", (req, res) => {
   const templateVars = {urls : urlDatabase};
   res.render("urls_index", templateVars);
 });
+//Adding a new get route to allow a form submission
+app.get("/urls/new", (req, res) => {
+  res.render("urls_new");
+});
 //recently aded below;
 // the shortURL in the string below refers top the key of urlDatabase
 app.get("/urls/:shortURL", (req, res) => {
