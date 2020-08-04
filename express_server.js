@@ -1,7 +1,18 @@
 const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
-// const ejs = require("ejs"); // THis might be redundent
+const bodyParser = require("body-parser");
+app.use(bodyParser.urlencoded({ extended: true }));
+const arr = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
+function generateRandomString(length, arr) {
+  let ans = "";
+  for (let i = length; i > 0; i--) {
+    ans += arr[Math.floor(Math.random() * arr.length)]; 
+  }
+  return ans;
+  // alternativly below;
+  // let ans = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+}
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -21,6 +32,11 @@ app.get("/urls", (req, res) => {
 //Adding a new get route to allow a form submission
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
+});
+// Below accepts the form
+app.post("/urls", (req, res) => {
+  console.log(req.body);  // Log the POST request body to the console
+  res.send("Ok");         // Respond with 'Ok' (we will replace this)
 });
 //recently aded below;
 // the shortURL in the string below refers top the key of urlDatabase
