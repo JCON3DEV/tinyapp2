@@ -13,6 +13,8 @@ function generateRandomString(length, arr) {
   // alternativly below;
   // let ans = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 }
+// something is broken with importing this. Need to fix
+// const generateRandomString = require('randomString.js'); 
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
