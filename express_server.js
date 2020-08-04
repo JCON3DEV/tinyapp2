@@ -39,7 +39,8 @@ app.post("/urls", (req, res) => {
   const idString = generateRandomString(6,arr);
   // const longURL = urlDatabase[shortURL];
   urlDatabase[idString] = req.body.longURL;
-  res.send("Ok");         // Respond with 'Ok' (we will replace this)
+  // res.send("Ok");         // Respond with 'Ok' (we will replace this)
+  res.redirect(`/urls/${idString}`);
 });
 //recently aded below;
 // the shortURL in the string below refers top the key of urlDatabase
