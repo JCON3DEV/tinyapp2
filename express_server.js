@@ -15,10 +15,25 @@ app.get("/", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  let templateVars = {urls : urlDatabase};
+  const templateVars = {urls : urlDatabase};
   res.render("urls_index", templateVars);
 });
+//recently aded below;
+// the shortURL in the string below refers top the key of urlDatabase
+app.get("/urls/:shortURL", (req, res) => {
+  // assigned a variable to the object key using; req.params.shortURL
+  const shortURL = req.params.shortURL;
+  // console.log(req.params); 
+  //Above shows the short URL and its valu in the server terminal
+  // longURL: is using trad notation to assign the vlaue of that key
+  const templateVars = { shortURL, longURL: urlDatabase[shortURL] };
+  res.render("urls_show", templateVars);
+})
 
+// app.get("/urls/:shortURL", (req, res) => {
+//   res.render("urls_show", templateVars.9sm5xK);
+// })
+// ends above;
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
