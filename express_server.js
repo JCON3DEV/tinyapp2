@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
+var cookieParser = require('cookie-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
 const arr = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
 function generateRandomString(length, arr) {
@@ -22,10 +23,21 @@ const urlDatabase = {
 };
 
 app.set('view engine', 'ejs');
+app.use(cookieParser());
 
 app.get("/", (req, res) => {
   res.send("Bonjour!");
 });
+
+//#######################################
+// login user method
+app.post("/login", (req, res) =>{
+  console.log(req.body.name);
+  res.cookie('username',req.body.name);
+  // Below was suggested by Travis G - not sure of purpose yet.
+  // res.cookie('cookiename', 'cookievalue', { maxAge: 900000, httpOnly: true }); 
+  res.redirect("/urls");
+})
 
 //Delte method
 app.post('/urls/:shortURL/delete', (req, res) => {
