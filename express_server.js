@@ -24,7 +24,7 @@ const urlDatabase = {
 //##########################################
 // let templateVars = {
 //   username: req.cookies["username"],
-//   // ... how to send this to the headers ?? ... 
+  // ... how to send this to the headers ?? ... 
 // };
 // res.render("urls_index", templateVars);
 
@@ -42,6 +42,12 @@ app.post("/login", (req, res) =>{
   res.cookie('username',req.body.name);
   // Below was suggested by Travis G - not sure of purpose yet.
   // res.cookie('cookiename', 'cookievalue', { maxAge: 900000, httpOnly: true }); 
+  res.redirect("/urls");
+})
+
+// logout method
+app.post("/logout", (req, res) => {
+  res.clearCookie("username");
   res.redirect("/urls");
 })
 
