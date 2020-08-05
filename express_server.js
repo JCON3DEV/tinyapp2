@@ -17,6 +17,8 @@ function generateRandomString(length, arr) {
 // something is broken with importing this. Need to fix
 // const generateRandomString = require('randomString.js'); 
 
+
+// ======================= set up for modules ===================
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
@@ -33,16 +35,17 @@ const users = {
 app.set('view engine', 'ejs');
 app.use(cookieParser());
 
+
+// ===================  Below is page structure =====================
+// changing from current to Most specific --> least specific
+
 app.get("/", (req, res) => {
   res.send("Bonjour!");
 });
-///###########
-// new link to registratin page hopefully
-// app.get("/urls", (req, res) =>{
-//   res.render("register")
-// })
-//#################
+
+
 // login user method
+// ### new a Get login /###/
 app.post("/login", (req, res) =>{
   console.log(req.body.name);
   let templateVars = {
