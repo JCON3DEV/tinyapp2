@@ -39,10 +39,93 @@ app.use(cookieParser());
 // ===================  Below is page structure =====================
 // changing from current to Most specific --> least specific
 
-app.get("/", (req, res) => {
-  res.send("Bonjour!");
+
+
+
+//Edit function
+app.get('/urls/:shortURL/edit', (req,res) =>{
+  // console.log(req.params.shortURL);
+  
+  res.redirect(`/urls/${req.params.shortURL}`);  
 });
 
+
+
+//Adding a new get route to allow a form submission
+app.get("/urls/new", (req, res) => {
+  let templateVars = {
+    username: req.cookies["username"],
+    // ... how to send this to the headers ?? ... 
+  };
+  res.render("urls_new", templateVars);
+});
+
+
+
+// the shortURL in the string below refers to the key of urlDatabase
+app.get("/urls/:shortURL", (req, res) => {
+  // assigned a variable to the object key using; req.params.shortURL
+  const shortURL = req.params.shortURL;
+  // console.log(req.params); 
+  //Above shows the short URL and its valu in the server terminal
+  // longURL: is using trad notation to assign the vlaue of that key
+  const templateVars = { username: req.cookies["username"], longURL: urlDatabase[shortURL], shortURL };
+  res.render("urls_show", templateVars);
+});
+
+app.get("/urls.json", (req, res) => {
+  res.json(urlDatabase);
+});
+
+app.get("/urls", (req, res) => {
+  let templateVars = {
+    username: req.cookies["username"],
+    urls: urlDatabase
+  };
+  
+  res.render("urls_index", templateVars);
+});
+// app.get("/urls/:shortURL", (req, res) => {
+  //   res.render("urls_show", templateVars.9sm5xK);
+  // })
+  // route for registration page
+app.get("/register", (req, res) =>{
+  res.render('register', {username:null})
+})
+
+app.get("/hello", (req, res) => {
+  res.send("<html><body>Hello <b>World</b></body></html>\n");
+});
+
+app.get("/", (req, res) => {
+res.send("Bonjour!");
+});
+
+//======================================= POST Routes ============
+//route for Edit
+app.post(`/urls/:shortURL/edit`, (req, res) => {
+  console.log(req.params.shortURL);//Gives the shortURL
+  const shortId = req.params.shortURL;
+  console.log(req.body.longURL); // Gives the longURL object
+  const newLongId = req.body.longURL;
+  console.log(urlDatabase);
+  urlDatabase[shortId]= newLongId;
+  res.redirect('/urls');
+})
+
+app.post("/register", (req, res) => {
+  res.render("register", templateVars);
+})
+
+// Below accepts the form
+app.post("/urls", (req, res) => {
+  console.log(req.body);  // Log the POST request body to the console
+  const idString = generateRandomString(6,arr);
+  // const longURL = urlDatabase[shortURL];
+  urlDatabase[idString] = req.body.longURL;
+  // Below redirects the user to their new short URL address
+  res.redirect(`/urls/${idString}`);
+});
 
 // login user method
 // ### new a Get login /###/
@@ -58,7 +141,6 @@ app.post("/login", (req, res) =>{
   // res.cookie('cookiename', 'cookievalue', { maxAge: 900000, httpOnly: true }); 
   res.render("register", templateVars);//changed this from "/urls"
 })
-
 // logout method
 app.post("/logout", (req, res) => {
   res.clearCookie("username");
@@ -70,86 +152,6 @@ app.post('/urls/:shortURL/delete', (req, res) => {
   delete urlDatabase[req.params.shortURL];
   res.redirect('/urls/');
 }); 
-
-//Edit function
-app.get('/urls/:shortURL/edit', (req,res) =>{
-  // console.log(req.params.shortURL);
-  
-  res.redirect(`/urls/${req.params.shortURL}`);  
-});
-//route for Edit
-app.post(`/urls/:shortURL/edit`, (req, res) => {
-  console.log(req.params.shortURL);//Gives the shortURL
-  const shortId = req.params.shortURL;
-  console.log(req.body.longURL); // Gives the longURL object
-  const newLongId = req.body.longURL;
-  console.log(urlDatabase);
-  urlDatabase[shortId]= newLongId;
-  res.redirect('/urls');
-})
-
-// route for registration page
-app.get("/register", (req, res) =>{
-  res.render('register', {username:null})
-})
-
-app.post("/register", (req, res) => {
-  res.render("register", templateVars);
-})
-
-app.get("/urls", (req, res) => {
-  let templateVars = {
-    username: req.cookies["username"],
-    urls: urlDatabase
-    // ... how to send this to the headers ?? ... 
-  };
-
-  res.render("urls_index", templateVars);
-});
-
-//Adding a new get route to allow a form submission
-app.get("/urls/new", (req, res) => {
-  let templateVars = {
-    username: req.cookies["username"],
-    // ... how to send this to the headers ?? ... 
-  };
-  res.render("urls_new", templateVars);
-});
-
-// Below accepts the form
-app.post("/urls", (req, res) => {
-  console.log(req.body);  // Log the POST request body to the console
-  const idString = generateRandomString(6,arr);
-  // const longURL = urlDatabase[shortURL];
-  urlDatabase[idString] = req.body.longURL;
-  // Below redirects the user to their new short URL address
-  res.redirect(`/urls/${idString}`);
-});
-
-
-// the shortURL in the string below refers to the key of urlDatabase
-app.get("/urls/:shortURL", (req, res) => {
-  // assigned a variable to the object key using; req.params.shortURL
-  const shortURL = req.params.shortURL;
-  // console.log(req.params); 
-  //Above shows the short URL and its valu in the server terminal
-  // longURL: is using trad notation to assign the vlaue of that key
-  const templateVars = { username: req.cookies["username"], longURL: urlDatabase[shortURL], shortURL };
-  res.render("urls_show", templateVars);
-})
-
-// app.get("/urls/:shortURL", (req, res) => {
-//   res.render("urls_show", templateVars.9sm5xK);
-// })
-// ends above;
-app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
-});
-
-app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body></html>\n");
-});
-
 
 
 app.listen(PORT, () => {
