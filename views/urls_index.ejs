@@ -47,13 +47,23 @@
             <td><%= urls[url] %></td>
             <td>
               <div class="form-example">
+                <form method="GET" action="/urls/<%= url %>/edit">
+                  <button type="submit" class="btn btn-primary">
+                    edit
+                  </button>
+                </form>
+                <!-- <input type="text" name="name" id="name" required> -->
+              </div>
+            </td>
+            <td>
+              <div class="form-example">
                 <form method="POST" action="/urls/<%= url %>/delete">
                   <button type="submit" class="btn btn-danger" >
                   Delete
                   </button>
                 </form>
               <!-- <input type="text" name="name" id="name" required> -->
-            </div>
+            </div>            
             </td>
         </tr>
         <% } %>

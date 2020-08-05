@@ -29,10 +29,25 @@ app.get("/", (req, res) => {
 
 //Delte method
 app.post('/urls/:shortURL/delete', (req, res) => {
-  console.log(req.params.shortURL);
   delete urlDatabase[req.params.shortURL];
   res.redirect('/urls/');
 }); 
+
+//Edit function
+app.get('/urls/:shortURL/edit', (req,res) =>{
+  // console.log(req.params.shortURL);
+  res.redirect(`/urls/${req.params.shortURL}`);  
+});
+//route for Edit
+app.post(`/urls/:shortURL/edit`, (req, res) => {
+  console.log(req.params.shortURL);//Gives the shortURL
+  const shortId = req.params.shortURL;
+  console.log(req.body.longURL); // Gives the longURL object
+  const newLongId = req.body.longURL;
+  console.log(urlDatabase);
+  urlDatabase[shortId]= newLongId;
+  res.redirect('/urls');
+})
 
 app.get("/urls", (req, res) => {
   const templateVars = {urls : urlDatabase};
