@@ -21,13 +21,14 @@ const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
-//##########################################
-// let templateVars = {
-//   username: req.cookies["username"],
-  // ... how to send this to the headers ?? ... 
-// };
-// res.render("urls_index", templateVars);
 
+const users = {
+  "userRandomID": {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dinosaur"
+  },
+};
 
 app.set('view engine', 'ejs');
 app.use(cookieParser());
@@ -35,14 +36,24 @@ app.use(cookieParser());
 app.get("/", (req, res) => {
   res.send("Bonjour!");
 });
-
+///###########
+// new link to registratin page hopefully
+// app.get("/urls", (req, res) =>{
+//   res.render("register")
+// })
+//#################
 // login user method
 app.post("/login", (req, res) =>{
   console.log(req.body.name);
+  let templateVars = {
+    username: req.cookies["username"],
+    urls: urlDatabase
+    // ... how to send this to the headers ?? ... 
+  };
   res.cookie('username',req.body.name);
   // Below was suggested by Travis G - not sure of purpose yet.
   // res.cookie('cookiename', 'cookievalue', { maxAge: 900000, httpOnly: true }); 
-  res.redirect("/urls");
+  res.render("register", templateVars);//changed this from "/urls"
 })
 
 // logout method
@@ -72,6 +83,15 @@ app.post(`/urls/:shortURL/edit`, (req, res) => {
   console.log(urlDatabase);
   urlDatabase[shortId]= newLongId;
   res.redirect('/urls');
+})
+
+// route for registration page
+app.get("/register", (req, res) =>{
+  res.render('register', {username:null})
+})
+
+app.post("/register", (req, res) => {
+  res.render("register", templateVars);
 })
 
 app.get("/urls", (req, res) => {
@@ -111,7 +131,7 @@ app.get("/urls/:shortURL", (req, res) => {
   // console.log(req.params); 
   //Above shows the short URL and its valu in the server terminal
   // longURL: is using trad notation to assign the vlaue of that key
-  const templateVars = { shortURL, longURL: urlDatabase[shortURL] };
+  const templateVars = { username: req.cookies["username"], longURL: urlDatabase[shortURL], shortURL };
   res.render("urls_show", templateVars);
 })
 
