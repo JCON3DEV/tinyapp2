@@ -10,15 +10,21 @@
         <a class="nav-item nav-link" href="/urls">My URLs</a>
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
     </div>
-    <form action="/login" method="POST" class="form-example">
-      <div class="form-example">
-        <label for="name">Username</label>
-        <input type="text" name="name" id="name" required>
-        <button class="favorite styled" type="submit">
-          Add to favorites
-        </button>
-      </div>
-    </form>
+      <% if (username) { %>
+        <p> <%= username %> </p>
+        
+      <% } else { %>
+      
+      <form action="/login" method="POST" class="form-example">
+        <div class="form-example" style="float:right">
+          <label for="name">Username</label>
+          <input type="text" name="name" id="name" required>
+          <button class="favorite styled" type="submit">
+            Add to favorites
+          </button>
+        </div>
+      </form>
+    <% } %>
     </div>
     
 

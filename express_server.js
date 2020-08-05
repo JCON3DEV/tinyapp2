@@ -21,6 +21,13 @@ const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
+//##########################################
+// let templateVars = {
+//   username: req.cookies["username"],
+//   // ... how to send this to the headers ?? ... 
+// };
+// res.render("urls_index", templateVars);
+
 
 app.set('view engine', 'ejs');
 app.use(cookieParser());
@@ -29,7 +36,6 @@ app.get("/", (req, res) => {
   res.send("Bonjour!");
 });
 
-//#######################################
 // login user method
 app.post("/login", (req, res) =>{
   console.log(req.body.name);
@@ -48,6 +54,7 @@ app.post('/urls/:shortURL/delete', (req, res) => {
 //Edit function
 app.get('/urls/:shortURL/edit', (req,res) =>{
   // console.log(req.params.shortURL);
+  
   res.redirect(`/urls/${req.params.shortURL}`);  
 });
 //route for Edit
@@ -62,13 +69,22 @@ app.post(`/urls/:shortURL/edit`, (req, res) => {
 })
 
 app.get("/urls", (req, res) => {
-  const templateVars = {urls : urlDatabase};
+  let templateVars = {
+    username: req.cookies["username"],
+    urls: urlDatabase
+    // ... how to send this to the headers ?? ... 
+  };
+
   res.render("urls_index", templateVars);
 });
 
 //Adding a new get route to allow a form submission
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  let templateVars = {
+    username: req.cookies["username"],
+    // ... how to send this to the headers ?? ... 
+  };
+  res.render("urls_new", templateVars);
 });
 
 // Below accepts the form
