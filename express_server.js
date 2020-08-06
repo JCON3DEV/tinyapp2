@@ -115,17 +115,34 @@ app.post("/urls", (req, res) => {
 app.get("/register", (req, res) =>{
   res.render('register', {username:null})
 })
+
+// const usersDatabase = {
+//   "userRandomID": {
+//     id: "userRandomID",
+//     email: "user@example.com",
+//     password: "purple-monkey-dinosaur"
+//   },
+// };
+
+// registration data recieved from user
 app.post("/register", (req, res) => {
-  // usersDatabase[Id] = {
-  //   // id: ndjndnjd,
-  //   // email: fmfif@dmwidn,
-  //   // password: password123
-  // };
-  console.log(req);
+  const idNum = generateRandomString(6,arr)
   const templateVars = {
-    username: req.body.email
+    userId: idNum,
+    username: req.body.email,
+    password: req.body.password,
   };
-  res.render("register", templateVars);
+  /*
+  obj = { a: [1, 2, 3]};
+  obj[b] / obj.b = [4, 5, 6, ]
+
+  obj = {a xxxx, b xxx}
+  */
+  usersDatabase[idNum] = templateVars;
+  console.log("this is the object; ", usersDatabase[idNum]);
+  console.log(usersDatabase);
+  res.cookie('user_id', idNum);
+  res.redirect("/urls");
 });
 
 
@@ -133,12 +150,7 @@ app.post("/register", (req, res) => {
 app.post("/logout", (req, res) => {
   res.clearCookie("username");
   res.redirect("/urls");
-})
-
-
-//======================================= POST Routes ============
-//route for Edit
-
+});
 
 // login user method
 // ### new a Get login /###/
