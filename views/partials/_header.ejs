@@ -12,9 +12,6 @@
     </div>
     <!--   If cookie(username) === DO NOT KNOW  ======== -->
     <!-- Then do not disply the next -->
-    <% if (user_id) { %>
-
-    }
       <div>
       <% if (username) { %> 
         <p> <%= username %> </p><!--Probably shoud change this to the unique id-->
@@ -32,7 +29,7 @@
       <form action="/login" method="POST" class="form-example">
         <div class="form-example" style="float:right">
           <label for="name">Username</label>
-          <input type="text" name="name" id="name" required>
+          <input type="text" name="monkey" id="name" required>
           <button class="favorite styled" type="submit">
             Login
           </button>

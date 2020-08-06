@@ -155,7 +155,7 @@ app.post("/logout", (req, res) => {
 // login user method
 // ### new a Get login /###/
 app.post("/login", (req, res) =>{
-  console.log(req.body.name);
+  console.log(req.body);
   let templateVars = {
     username: req.cookies["username"],
     urls: urlDatabase

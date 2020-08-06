@@ -41,14 +41,14 @@
       <tbody>
         
         
-        <% for(let url in urls) { %>
+        <% for(let shortURL in urls) { %>
           <tr>
             <!-- the below hyperlink is the website url using interpolation from ejs -->
-            <td><a href= "urls/<%= url %> " ><%= url %></a></td>
-            <td><%= urls[url] %></td>
+            <td><a href= "urls/<%= shortURL %> " ><%= shortURL %></a></td>
+            <td><%= urls[shortURL] %></td>
             <td>
               <div class="form-example">
-                <form method="GET" action="/urls/<%= url %>/edit">
+                <form method="GET" action="/urls/<%= shortURL %>/edit">
                   <button type="submit" class="btn btn-primary">
                     edit
                   </button>
@@ -58,7 +58,7 @@
             </td>
             <td>
               <div class="form-example">
-                <form method="POST" action="/urls/<%= url %>/delete">
+                <form method="POST" action="/urls/<%= shortURL %>/delete">
                   <button type="submit" class="btn btn-danger" >
                   Delete
                   </button>
