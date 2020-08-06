@@ -19,34 +19,24 @@
   </header>
 
   <main style="margin: 1em;">
-    <h3>Create TinyURL</h3>
-    <form class="form-inline" action="/urls" method="POST">
-      <div class="form-group mb-2">
-        <label for="longURL">Enter a URL:</label>
-        <input class="form-control" type="text" name="longURL" placeholder="http://" style="width: 300px; margin: 1em">
-        <button type="submit" class="btn btn-primary">Submit</button>
+    <h3>Registration</h3>
         
-        <form action="/login" method="POST" class="form-example">
-          <div class="form-example" style="float:right">
+        <form action="/register" method="POST">
+          
+          <div>
             <label for="name">email</label>
-            <input type="email" name="email" id="name" required>
-            <button class="favorite styled" type="submit">
-              Add to favorites
-            </button>
+            <input type="email" name="email" id="name" placeholder= "madeupemail.com" required>
           </div>
-        </form>
-
-        <form action="/login" method="POST" class="form-example">
-          <div class="form-example" style="float:right">
+          
+          <div>
             <label for="name">password</label>
-            <input type="password" name="password" id="name" required>
-            <button class="favorite styled" type="submit">
-              password
-            </button>
+            <input type="password" name="password" id="name" placeholder = "not Password123" required>
           </div>
+          
+          <button type="submit" class="btn btn-primary">Submit</button>
         </form>
       </div>
-    </form>
+
   </main>
   <!-- Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
