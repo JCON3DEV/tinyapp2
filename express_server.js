@@ -162,6 +162,26 @@ app.post("/register", (req, res) => {
     email: req.body.email,
     password: req.body.password,
   };
+  console.log("userObject; ", userObject);
+  console.log("database ", usersDatabase);
+  // below should check the new input vs the existing database
+  for (let user_id in usersDatabase) {
+    // console.log("~~~ ########", user_id, userObject.email,usersDatabase[user_id].email);
+    if (userObject.email === usersDatabase[user_id].email) {
+      res.status(400)
+        .send("Page Not Found");
+        // 400s if browsers or users fault roughly
+        // 500s server fault
+      return;
+    }
+  };
+  // JH Below checks if the email and password fields are aemopty and returns a 404 if true
+  if (userObject.email === "" || userObject.password === "") {
+    res.status(404)
+      .send("Page Not Found");
+    return;
+  };
+
   usersDatabase[idNum] = userObject;
   console.log("this is the object; ", usersDatabase[idNum]);
   console.log(usersDatabase);
@@ -186,7 +206,8 @@ app.post("/login", (req, res) =>{
   console.log(req.body);
   
   // Check if username exists in database
-  for (const user in usersDatabase) {
+  const emailTestCase = Object.keys(usersDatabase);
+  for (const user in emailTestCase) {
     if (usersDatabase[user].email === req.body.username) {
       userObject = usersDatabase[user];
     }
