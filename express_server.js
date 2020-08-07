@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 var cookieParser = require('cookie-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
 const arr = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
+
 function generateRandomString(length, arr) {
   let ans = "";
   for (let i = length; i > 0; i--) {
@@ -15,7 +16,7 @@ function generateRandomString(length, arr) {
   // let ans = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 }
 // something is broken with importing this. Need to fix
-// const generateRandomString = require('randomString.js'); 
+//const generateRandomString = require('randomString.js'); 
 
 
 // ======================= set up for modules ===================
@@ -48,6 +49,7 @@ app.get('/urls/:shortURL/edit', (req,res) =>{
   
   res.redirect(`/urls/${req.params.shortURL}`);  
 });
+
 app.post(`/urls/:shortURL/edit`, (req, res) => {
   console.log(req.params.shortURL);//Gives the shortURL
   const shortId = req.params.shortURL;
@@ -62,6 +64,16 @@ app.post(`/urls/:shortURL/edit`, (req, res) => {
 
 //Adding a new get route to allow a form submission
 app.get("/urls/new", (req, res) => {
+  // Step 1 - check if they have a coookie?
+  // if (req.cookies[username]) {
+
+  // }
+  // // Step 2 - if no cookie, kick them out
+  // else {
+  //   res.redirect('')
+  // }
+  // Step 3 - if cookie, pack the user info into a userObj & render usls_new with the obj
+
   let templateVars = {
     username: req.cookies["username"],
     // ... how to send this to the headers ?? ... 
@@ -83,7 +95,11 @@ app.get("/urls/:shortURL", (req, res) => {
   // console.log(req.params); 
   //Above shows the short URL and its valu in the server terminal
   // longURL: is using trad notation to assign the vlaue of that key
-  const templateVars = { username: req.cookies["username"], longURL: urlDatabase[shortURL], shortURL };
+  const templateVars = { username: req.cookies["username"], email: null, longURL: urlDatabase[shortURL], shortURL };
+  if (req.cookies["username"]) {
+    templateVars.email = usersDatabase['userRandomID'].email;
+  }
+  // This hardcoding solution will cause problems later.
   res.render("urls_show", templateVars);
 });
 
@@ -94,11 +110,25 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  const templateVars = {
+  // // 1. user has not login
+  // const templateVars = {
+  //   username: null,
+  //   urls: urlDatabase,
+  //   email: null
+  // }; 
+  // // 2. user has login
+  // const templateVars = {
+  //   username: req.cookies["username"],
+  //   urls: urlDatabase,
+  //   email: usersDatabase[id].email
+  // };
+
+  const userNotLogged = {
     username: req.cookies["username"],
-    urls: urlDatabase
+    urls: urlDatabase,
+    email: null
   };
-  res.render("urls_index", templateVars);
+  res.render("urls_index", userNotLogged);
 });
 
 // Below accepts the form
@@ -126,23 +156,20 @@ app.get("/register", (req, res) =>{
 
 // registration data recieved from user
 app.post("/register", (req, res) => {
+  if (req === ""){
+    throw Error;
+  }
   const idNum = generateRandomString(6,arr)
   const templateVars = {
     userId: idNum,
     username: req.body.email,
     password: req.body.password,
   };
-  /*
-  obj = { a: [1, 2, 3]};
-  obj[b] / obj.b = [4, 5, 6, ]
-
-  obj = {a xxxx, b xxx}
-  */
   usersDatabase[idNum] = templateVars;
   console.log("this is the object; ", usersDatabase[idNum]);
   console.log(usersDatabase);
   res.cookie('user_id', idNum);
-  res.redirect("/urls");
+  res.render("urls_index", templateVars);
 });
 
 
@@ -154,17 +181,28 @@ app.post("/logout", (req, res) => {
 
 // login user method
 // ### new a Get login /###/
+//#############################################
+// Change this cookie to the global user object
 app.post("/login", (req, res) =>{
-  console.log(req.body);
-  let templateVars = {
-    username: req.cookies["username"],
-    urls: urlDatabase
-    // ... how to send this to the headers ?? ... 
+  let userObject ={
   };
-  res.cookie('username',req.body.name);
-  // Below was suggested by Travis G - not sure of purpose yet.
-  // res.cookie('cookiename', 'cookievalue', { maxAge: 900000, httpOnly: true }); 
-  res.redirect("/urls");
+  console.log(req.body);
+  
+  // Check if username exists in database
+  for (const user in usersDatabase) {
+    if (usersDatabase[user].email === req.body.username) {
+      userObject = usersDatabase[user];
+    }
+    console.log(usersDatabase[user]);
+  }
+  
+  let actualUser = {
+    userObject,
+    urls: urlDatabase,
+    email: userObject.email
+  };
+  res.cookie('username',req.body.username);
+  res.render("urls_index", actualUser);
 })
 
 
