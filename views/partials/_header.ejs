@@ -12,12 +12,11 @@
     </div>
     <!--   If cookie(username) === DO NOT KNOW  ======== -->
     <!-- Then do not disply the next -->
+    <!-- if email === null, you want to show them login/ register-->
+    <!-- if email === true, you want to show them logout-->
+    <% if (user !== undefined) { %> <!--    -->
       <div>
-        <!-- if email === null, you want to show them login/ register-->
-        <!-- if email === true, you want to show them logout-->
-
-      <% if (email !== null) { %> <!--    -->
-        <p> <%= userObject.email %> </p><!--Changed this to the unique email -->
+        <p> <%= user.email %> </p><!--Changed this to the unique email -->
         <form action="/logout" method="POST" class="form-example">
           <div class="form-example" style="float:right">
             <label for="name"></label>

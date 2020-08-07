@@ -43,20 +43,16 @@ app.use(cookieParser());
 
 
 
-//Edit function
+//Edit function // below is not strictly necessary;
 app.get('/urls/:shortURL/edit', (req,res) =>{
-  // console.log(req.params.shortURL);
-  
   res.redirect(`/urls/${req.params.shortURL}`);  
 });
 
 app.post(`/urls/:shortURL/edit`, (req, res) => {
-  console.log(req.params.shortURL);//Gives the shortURL
   const shortId = req.params.shortURL;
-  console.log(req.body.longURL); // Gives the longURL object
   const newLongId = req.body.longURL;
-  console.log(urlDatabase);
   urlDatabase[shortId] = newLongId;
+  console.log(urlDatabase);
   res.redirect('/urls');
 });
 
@@ -64,19 +60,19 @@ app.post(`/urls/:shortURL/edit`, (req, res) => {
 
 //Adding a new get route to allow a form submission
 app.get("/urls/new", (req, res) => {
-  // Step 1 - check if they have a coookie?
+  // Step 1 - check th user obj
   // if (req.cookies[username]) {
 
   // }
-  // // Step 2 - if no cookie, kick them out
+  // // Step 2 
   // else {
   //   res.redirect('')
   // }
   // Step 3 - if cookie, pack the user info into a userObj & render usls_new with the obj
-
+  let user_id = req.cookies["user_id"];
+  let user = usersDatabase[user_id];
   let templateVars = {
-    username: req.cookies["username"],
-    // ... how to send this to the headers ?? ... 
+    user,
   };
   res.render("urls_new", templateVars);
 });
@@ -87,27 +83,28 @@ app.post('/urls/:shortURL/delete', (req, res) => {
   res.redirect('/urls/');
 }); 
 
-
-// the shortURL in the string below refers to the key of urlDatabase
+//This is the edit page
 app.get("/urls/:shortURL", (req, res) => {
-  // assigned a variable to the object key using; req.params.shortURL
   const shortURL = req.params.shortURL;
-  // console.log(req.params); 
-  //Above shows the short URL and its valu in the server terminal
-  // longURL: is using trad notation to assign the vlaue of that key
-  const templateVars = { username: req.cookies["username"], email: null, longURL: urlDatabase[shortURL], shortURL };
-  if (req.cookies["username"]) {
-    templateVars.email = usersDatabase['userRandomID'].email;
-  }
-  // This hardcoding solution will cause problems later.
+  let user_id = req.cookies["user_id"];
+  let user = usersDatabase[user_id];
+  const templateVars = {
+    user,
+    longURL: urlDatabase[shortURL], 
+    shortURL
+  };
   res.render("urls_show", templateVars);
 });
 
 
-
+// visualisation of the database // security issue
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
+app.get("/users.JSON", (req, res) => {
+  res.json(usersDatabase);
+});
+//
 
 app.get("/urls", (req, res) => {
   // // 1. user has not login
@@ -122,16 +119,19 @@ app.get("/urls", (req, res) => {
   //   urls: urlDatabase,
   //   email: usersDatabase[id].email
   // };
+  let user_id = req.cookies["user_id"];
+  let user = usersDatabase[user_id];
+  // eventually add conditional statement for truthy / falsy of user
 
-  const userNotLogged = {
-    username: req.cookies["username"],
-    urls: urlDatabase,
-    email: null
+  const templateVars = {
+    user,
+    urls: urlDatabase, // Be aware of this. only this object should have urls: as urlDatabase.
   };
-  res.render("urls_index", userNotLogged);
+  res.render("urls_index", templateVars);
 });
 
-// Below accepts the form
+// Below accepts the form from /urls/new
+// makes the new widget
 app.post("/urls", (req, res) => {
   console.log(req.body);  // Log the POST request body to the console
   const idString = generateRandomString(6, arr);
@@ -143,7 +143,7 @@ app.post("/urls", (req, res) => {
 
 // registration page
 app.get("/register", (req, res) =>{
-  res.render('register', {username:null})
+  res.render('register');
 })
 
 // const usersDatabase = {
@@ -156,31 +156,28 @@ app.get("/register", (req, res) =>{
 
 // registration data recieved from user
 app.post("/register", (req, res) => {
-  if (req === ""){
-    throw Error;
-  }
-  const idNum = generateRandomString(6,arr)
-  const templateVars = {
-    userId: idNum,
-    username: req.body.email,
+  const idNum = generateRandomString(6,arr);
+  const userObject = {
+    id: idNum,
+    email: req.body.email,
     password: req.body.password,
   };
-  usersDatabase[idNum] = templateVars;
+  usersDatabase[idNum] = userObject;
   console.log("this is the object; ", usersDatabase[idNum]);
   console.log(usersDatabase);
   res.cookie('user_id', idNum);
-  res.render("urls_index", templateVars);
+  res.redirect("/urls");
 });
 
 
 // logout method // NO logout Get
 app.post("/logout", (req, res) => {
-  res.clearCookie("username");
+  res.clearCookie("user_id");
   res.redirect("/urls");
 });
 
 // login user method
-// ### new a Get login /###/
+// ### new a Get login /###/  Curently broken
 //#############################################
 // Change this cookie to the global user object
 app.post("/login", (req, res) =>{
@@ -201,9 +198,10 @@ app.post("/login", (req, res) =>{
     urls: urlDatabase,
     email: userObject.email
   };
+  // No render in POST ## to edit
   res.cookie('username',req.body.username);
   res.render("urls_index", actualUser);
-})
+});
 
 
 
