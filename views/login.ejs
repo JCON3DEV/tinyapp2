@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
     integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 
-  <title>New URL - TinyApp Example</title>
+  <title>TinyApp Login Page</title>
 </head>
 
 <body>
@@ -18,23 +18,23 @@
   </header>
 
   <main style="margin: 1em;">
-    <h3>Registration **** register.ejs</h3>
-        
-        <form action="/register" method="POST">
-          
-          <div>
-            <label for="name">email</label>
-            <input type="email" name="email" id="name" placeholder= "madeupemail.com" required>
-          </div>
-          
-          <div>
-            <label for="name">password</label>
-            <input type="password" name="password" id="name" placeholder = "not Password123" required>
-          </div>
-          
-          <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
+    <h3>### Login Page ####</h3>
+
+    <form action="/login" method="POST">
+
+      <div>
+        <label for="name">email</label>
+        <input type="email" name="email" id="name" placeholder="madeupemail.com" required>
       </div>
+
+      <div>
+        <label for="name">password</label>
+        <input type="password" name="password" id="name" placeholder="not Password123" required>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    </div>
 
   </main>
   <!-- Bootstrap JS -->

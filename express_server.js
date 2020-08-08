@@ -29,7 +29,7 @@ const usersDatabase = {
   "userRandomID": {
     id: "userRandomID",
     email: "user@example.com",
-    password: "purple-monkey-dinosaur"
+    password: "123"
   },
 };
 
@@ -61,7 +61,7 @@ app.post(`/urls/:shortURL/edit`, (req, res) => {
 //Adding a new get route to allow a form submission
 app.get("/urls/new", (req, res) => {
   // Step 1 - check th user obj
-  // if (req.cookies[username]) {
+  // if (req.cookies[user_id]) {
 
   // }
   // // Step 2 
@@ -109,13 +109,13 @@ app.get("/users.JSON", (req, res) => {
 app.get("/urls", (req, res) => {
   // // 1. user has not login
   // const templateVars = {
-  //   username: null,
+  //   user_id: null,
   //   urls: urlDatabase,
   //   email: null
   // }; 
   // // 2. user has login
   // const templateVars = {
-  //   username: req.cookies["username"],
+  //   user_id: req.cookies["user_id"],
   //   urls: urlDatabase,
   //   email: usersDatabase[id].email
   // };
@@ -150,7 +150,7 @@ app.get("/register", (req, res) =>{
 //   "userRandomID": {
 //     id: "userRandomID",
 //     email: "user@example.com",
-//     password: "purple-monkey-dinosaur"
+//     password: "123"
 //   },
 // };
 
@@ -169,7 +169,7 @@ app.post("/register", (req, res) => {
     // console.log("~~~ ########", user_id, userObject.email,usersDatabase[user_id].email);
     if (userObject.email === usersDatabase[user_id].email) {
       res.status(400)
-        .send("Page Not Found");
+        .send("Email already registered");
         // 400s if browsers or users fault roughly
         // 500s server fault
       return;
@@ -177,7 +177,7 @@ app.post("/register", (req, res) => {
   };
   // JH Below checks if the email and password fields are aemopty and returns a 404 if true
   if (userObject.email === "" || userObject.password === "") {
-    res.status(404)
+    res.status(400)
       .send("Page Not Found");
     return;
   };
@@ -189,6 +189,9 @@ app.post("/register", (req, res) => {
   res.redirect("/urls");
 });
 
+app.get("/login", (req, res) => {
+  res.render("login");
+});
 
 // logout method // NO logout Get
 app.post("/logout", (req, res) => {
@@ -201,27 +204,71 @@ app.post("/logout", (req, res) => {
 //#############################################
 // Change this cookie to the global user object
 app.post("/login", (req, res) =>{
-  let userObject ={
+  console.log("this is req.body; ", req.body);
+  const userObject = {
+    id: req.body.user_id,
+    email: req.body.email,
+    password: req.body.password,
   };
-  console.log(req.body);
-  
-  // Check if username exists in database
-  const emailTestCase = Object.keys(usersDatabase);
-  for (const user in emailTestCase) {
-    if (usersDatabase[user].email === req.body.username) {
-      userObject = usersDatabase[user];
+  let found = false;
+  //search the database for a matching email;
+  for (let users in usersDatabase) {
+    // below compares the login password with the password on record for that email
+    if (req.body.email === usersDatabase[users].email && userObject.password === usersDatabase[users].password) {
+      console.log("Existing user");
+      found = true;
+      //Need to set the cookie for that user // 
+      userObject.id = usersDatabase[users].id;
+      res.cookie("user_id", usersDatabase[users].id )
+      let objVar = {
+        user: usersDatabase[users],
+        urls: urlDatabase
+      };
+      res.render("urls_index", objVar);
     }
-    console.log(usersDatabase[user]);
+    
   }
   
-  let actualUser = {
-    userObject,
-    urls: urlDatabase,
-    email: userObject.email
+  for (let user_id in usersDatabase) {
+    if (found === false && userObject.email !== usersDatabase[user_id].email) {
+      res.status(403)
+        .send("User Not Found");
+      return;
+    }
+    // #################
+    // Change logic to give error if password not matching
+    // #################
+    // if (found === false && userObject.password !== usersDatabase[user_id].password) {
+    //   res.status(403)
+    //     .send("Password incorrect");
+    //   return;
+    // }
   };
+  
+  console.log("userObject; ", userObject);
+  console.log("database: ", usersDatabase);
+  console.log("req.body.user_id: ", req.body.user_id);
+
+  // res.cookie("user_id", req.body.user_id) //not sure on this yet
+  
+  // Check if  exists in database / might have to remove
+  // const emailTestCase = Object.keys(usersDatabase);
+  // for (const user in emailTestCase) {
+  //   if (usersDatabase[user].email === userObject.email) { // removed req.body.user_id
+  //     userObject = usersDatabase[user];
+  //   }
+  //   console.log(usersDatabase[user]);
+  // }
+  
+  // let actualUser = {
+  //   //userObject,
+  //   urls: urlDatabase,
+  //   email: req.body.email
+  // };
+  console.log(req.body.user_id);
   // No render in POST ## to edit
-  res.cookie('username',req.body.username);
-  res.render("urls_index", actualUser);
+  // res.cookie('user_id',req.body.user_id);
+  // res.render("urls_index", userObject);
 });
 
 
