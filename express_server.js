@@ -220,6 +220,11 @@ app.post("/login", (req, res) =>{
   let found = false;
   //search the database for a matching email;
   for (let users in usersDatabase) {
+    if (userObject.email === usersDatabase[users].email && userObject.password !== usersDatabase[users].password){
+      res.status(403)
+        .send("Password Incorrect");
+      return;
+    }
     // below compares the login password with the password on record for that email
     if (req.body.email === usersDatabase[users].email && userObject.password === usersDatabase[users].password) {
       console.log("Existing user");
