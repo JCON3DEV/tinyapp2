@@ -16,7 +16,7 @@
     <!-- login page is givig an error user not defined -->
     <% if (user !== undefined) { %> <!--  What to change this to?  -->
       <div>
-        <p> <%= user.email %> </p><!--Changed this to the unique email -->
+        <p>Logged in as; <%= user.email %> </p><!--Changed this to the unique email -->
         <form action="/logout" method="POST" class="form-example">
           <div class="form-example" style="float:right">
             <label for="name"></label>

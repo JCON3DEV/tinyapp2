@@ -143,7 +143,10 @@ app.post("/urls", (req, res) => {
 
 // registration page
 app.get("/register", (req, res) =>{
-  res.render('register');
+  const templateVars = {
+    user: undefined,
+  };
+  res.render('register', templateVars);
 })
 
 // const usersDatabase = {
@@ -190,7 +193,11 @@ app.post("/register", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-  res.render("login");
+  let objVar = {
+    //not sure if this is correct;
+    user: undefined 
+  };
+  res.render("login", objVar);
 });
 
 // logout method // NO logout Get
@@ -237,7 +244,7 @@ app.post("/login", (req, res) =>{
     }
     // #################
     // Change logic to give error if password not matching
-    // #################
+    // ################# Note that trying to login without account created does NOT yet have an error message 
     // if (found === false && userObject.password !== usersDatabase[user_id].password) {
     //   res.status(403)
     //     .send("Password incorrect");
