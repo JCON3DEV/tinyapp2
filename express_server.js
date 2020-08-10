@@ -8,7 +8,7 @@ const { getUserByEmail } = require('./helpers');
 const { urlsForUser } = require('./helpers');
 const salt = bcrypt.genSaltSync(10);
 const app = express();
-const PORT = 8080; // default port 8080
+const PORT = 8080;
 const arr = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
 
 // ======================  Middleware setup  ================================
@@ -21,9 +21,9 @@ app.use(cookieSesssion({
 }));
 app.set('view engine', 'ejs');
 
-// ======================= set up for modules ===================
+// ======================= Test Databases ===================
 const urlDatabase = {
-  "b2xVn2": { 
+  "b2xVn2": {
     longURL: "http://www.lighthouselabs.ca",
     userID:"aJ48lW"
   },
@@ -44,25 +44,18 @@ const usersDatabase = {
     password: "123"
   },
 };
-// =======================  Functions =================
 
-
-// ===================  Below is page structure =====================
-// changing from current to Most specific --> least specific
+// ===================  Page structure =====================
 
 //Delte method
 app.post('/urls/:shortURL/delete', (req, res) => {
-  console.log("deleteing");
   const shortURL = req.params.shortURL;
   const url = urlDatabase[shortURL];
   if (!url) {
-    console.log("Cannot find URL;", shortURL);
     res.redirect("/urls");
     return;
-  };
+  }
   const id = req.session["user_id"];
-  console.log("urlobject;", url);
-  console.log(id);
   if (url.userID !== id) {
     console.log("invalid user trying to delete");
     // poss give error mesage instead
@@ -71,25 +64,23 @@ app.post('/urls/:shortURL/delete', (req, res) => {
   }
   
   delete urlDatabase[shortURL];
-  console.log(urlDatabase);
   res.redirect('/urls/');
-}); 
+});
 
-//Edit function // below is not strictly necessary;
+//Edit function 
 app.get('/urls/:shortURL/edit', (req,res) =>{
-  res.redirect(`/urls/${req.params.shortURL}`);  //dzphht
+  res.redirect(`/urls/${req.params.shortURL}`);
 });
 
 app.post(`/urls/:shortURL/edit`, (req, res) => {
   const shortId = req.params.shortURL;
   const newLongId = req.body.longURL;
   
-  if (/*req.cookies*/req.session["user_id"] !== req.params.shortURL) {
+  if (req.session["user_id"] !== req.params.shortURL) {
     res.redirect("/urls");
     return;
-  };
+  }
   urlDatabase[shortId]["longURL"] = newLongId;
-  // console.log(urlDatabase);
   res.redirect('/urls');
 });
 
@@ -102,7 +93,7 @@ app.get("/urls/new", (req, res) => {
   if (!user_id || user_id !== user.id) {
     res.redirect("/login");
     return;
-  };
+  }
 
   let templateVars = {
     user,
@@ -115,7 +106,7 @@ app.get("/u/:shortURL", (req, res) => {
   const id = req.params.shortURL;
   //below redirects to whichever website is associated with the short URL
   res.redirect(urlDatabase[id]["longURL"]);
-})
+});
 
 //This is the edit page
 app.get("/urls/:shortURL", (req, res) => {
@@ -124,7 +115,7 @@ app.get("/urls/:shortURL", (req, res) => {
   let user = usersDatabase[user_id];
   const templateVars = {
     user,
-    longURL: urlDatabase[shortURL]["longURL"], 
+    longURL: urlDatabase[shortURL]["longURL"],
     shortURL
   };
   res.render("urls_show", templateVars);
@@ -144,9 +135,9 @@ app.get("/urls", (req, res) => {
   let user = usersDatabase[user_id];
   // // Below blocks access if the user is not logged in;
   if (!user) {
-      res.redirect("/login");
-      return;
-    };
+    res.redirect("/login");
+    return;
+  }
   const tempUrlsForUser = urlsForUser(user_id, urlDatabase);
   // console.log("tempURLS", tempUrlsForUser);
   // ###########################
@@ -180,7 +171,7 @@ app.get("/register", (req, res) =>{
     user: undefined,
   };
   res.render('register', templateVars);
-})
+});
 
 // registration data recieved from user
 app.post("/register", (req, res) => {
@@ -199,13 +190,13 @@ app.post("/register", (req, res) => {
         .send("Email already registered");
       return;
     }
-  };
+  }
   // Below checks if the email and password fields are aemopty and returns a 404 if true
   if (userObject.email === "" || userObject.password === "") {
     res.status(400)
       .send("Page Not Found");
     return;
-  };
+  }
 
   usersDatabase[idNum] = userObject;
   req.session.user_id = idNum;
@@ -216,7 +207,7 @@ app.post("/register", (req, res) => {
 app.get("/login", (req, res) => {
   let objVar = {
     //not sure if this is correct;
-    user: undefined 
+    user: undefined
   };
   res.render("login", objVar);
 });
@@ -236,14 +227,14 @@ app.post("/login", (req, res) =>{
   let user = getUserByEmail(email, usersDatabase);
   // console.log("user  && ", user);
   // console.log("usersDatabase[user]", usersDatabase);
-  const verdict = bcrypt.compareSync(password, user["password"] /*  Stored password in user DB */ );
+  bcrypt.compareSync(password, user["password"]);/*  Stored password in user DB */
   // console.log("verdict ", verdict);
 
 
   //2. Below checks if the login details are empty, responds w/ error msg
   if (!email || !password) {
     res.status(400)
-    .send("Please enter details");
+      .send("Please enter details");
   } else {
     // function compares email input by user to the database collection
     const user = getUserByEmail(email, usersDatabase);
@@ -251,20 +242,19 @@ app.post("/login", (req, res) =>{
     if (!user || !bcrypt.compareSync(password, user["password"])) {
       res.status(403)
         .send("invalid username or password");
-    }
-    else {
+    } else {
       // if username an pwd are correct;
       req.session.user_id = user.id;
       // res.cookie("user_id", user.id); // old code to be deleted after encoded cookies
-      res.redirect("/urls");  
+      res.redirect("/urls");
+    }
   }
-}
 });
 
 
 
 app.get("/", (req, res) => {
-res.send("Bonjour!");
+  res.send("Bonjour!");
 });
 
 

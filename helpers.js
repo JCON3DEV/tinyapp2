@@ -1,6 +1,4 @@
-// helperFunctions.js
-
-const arr = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
+// const arr = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
 function generateRandomString(length, arr) {
   let ans = "";
   for (let i = length; i > 0; i--) {
@@ -16,12 +14,11 @@ function getUserByEmail(email, database) {
     if (user.email === email) {
       return user;
     }
+    return undefined;
   }
 };
-//beleive this should be refactored to take two parameters id, & database
+
 function urlsForUser(id, database) {
-  // console.log("id;", id);
-  // console.log("db", database);
   let myUrls = {};
   for (let urlObjKey in database) {
     let userId = database[urlObjKey].userID;
@@ -29,7 +26,6 @@ function urlsForUser(id, database) {
       myUrls[urlObjKey] = database[urlObjKey];
     }
   }
-  // console.log(myUrls);
   return myUrls;
 };
 
