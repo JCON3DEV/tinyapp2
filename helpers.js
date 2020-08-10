@@ -8,13 +8,11 @@ function generateRandomString(length, arr) {
 };
 
 function getUserByEmail(email, database) {
-  const keys = Object.keys(database);
-  for (let key of keys) {
-    const user = database[key];
+  const itterableDatabase = Object.values(database);
+  for (let user of itterableDatabase) {
     if (user.email === email) {
       return user;
     }
-    return undefined;
   }
 };
 

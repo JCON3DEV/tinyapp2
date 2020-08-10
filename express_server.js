@@ -62,7 +62,6 @@ app.post('/urls/:shortURL/delete', (req, res) => {
     res.redirect("/urls");
     return;
   }
-  
   delete urlDatabase[shortURL];
   res.redirect('/urls/');
 });
@@ -88,7 +87,7 @@ app.post(`/urls/:shortURL/edit`, (req, res) => {
 
 //Adding a new get route to allow a form submission
 app.get("/urls/new", (req, res) => {
-  let user_id = /*req.cookies*/req.session["user_id"];
+  let user_id = req.session["user_id"];
   let user = usersDatabase[user_id];
   if (!user_id || user_id !== user.id) {
     res.redirect("/login");
@@ -102,16 +101,16 @@ app.get("/urls/new", (req, res) => {
 });
 
 
+//below redirects to whichever website is associated with the short URL
 app.get("/u/:shortURL", (req, res) => {
   const id = req.params.shortURL;
-  //below redirects to whichever website is associated with the short URL
   res.redirect(urlDatabase[id]["longURL"]);
 });
 
 //This is the edit page
 app.get("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
-  let user_id = /*req.cookies*/req.session["user_id"];
+  let user_id = req.session["user_id"];
   let user = usersDatabase[user_id];
   const templateVars = {
     user,
@@ -121,44 +120,30 @@ app.get("/urls/:shortURL", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
-
-// visualisation of the database // security issue
-app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
-});
-app.get("/users.JSON", (req, res) => {
-  res.json(usersDatabase);
-});
-
+//Main Landing Page
 app.get("/urls", (req, res) => {
-  let user_id = /*req.cookies*/req.session["user_id"];
+  let user_id = req.session["user_id"];
   let user = usersDatabase[user_id];
-  // // Below blocks access if the user is not logged in;
+  // Below blocks access if the user is not logged in;
   if (!user) {
     res.redirect("/login");
     return;
   }
   const tempUrlsForUser = urlsForUser(user_id, urlDatabase);
-  // console.log("tempURLS", tempUrlsForUser);
-  // ###########################
   const templateVars = {
     user,
-    urls: tempUrlsForUser, // possibly add ["longURL"] // Be aware of this. only this object should have urls: as urlDatabase.
+    urls: tempUrlsForUser,
   };
-  // console.log("get / urls templateVars", templateVars);
   res.render("urls_index", templateVars);
 });
 
 // Below accepts the form from /urls/new
 // makes the new widget
 app.post("/urls", (req, res) => {
-  // console.log(req.body.longURL);  // Log the POST request body to the console
   const newShortURL = generateRandomString(6, arr);
-  // const longURL = urlDatabase[shortURL];
-  // beleive this need to be the id
   urlDatabase[newShortURL] = {
     longURL : req.body.longURL,
-    userID: /*req.cookies*/req.session["user_id"],
+    userID: req.session["user_id"],
   };
   // Below redirects the user to their new short URL address
   res.redirect(`/urls/${newShortURL}`);
@@ -200,22 +185,19 @@ app.post("/register", (req, res) => {
 
   usersDatabase[idNum] = userObject;
   req.session.user_id = idNum;
-  // res.cookie('user_id', idNum);
   res.redirect("/urls");
 });
 
 app.get("/login", (req, res) => {
   let objVar = {
-    //not sure if this is correct;
     user: undefined
   };
   res.render("login", objVar);
 });
 
-// logout method // NO logout Get
+// logout method 
 app.post("/logout", (req, res) => {
   req.session = null;
-  // res.clearCookie("user_id"); // delete after cookies are encoded
   res.redirect("/urls");
 });
 
@@ -224,33 +206,25 @@ app.post("/login", (req, res) =>{
   //1. Receive the values
   const email = req.body.email;
   const password =  req.body.password;
-  let user = getUserByEmail(email, usersDatabase);
-  // console.log("user  && ", user);
-  // console.log("usersDatabase[user]", usersDatabase);
-  bcrypt.compareSync(password, user["password"]);/*  Stored password in user DB */
-  // console.log("verdict ", verdict);
 
-
-  //2. Below checks if the login details are empty, responds w/ error msg
-  if (!email || !password) {
-    res.status(400)
-      .send("Please enter details");
-  } else {
+  //2. Below checks if the login details are empty, if so responds w/ error msg
+  if (email && password) {
     // function compares email input by user to the database collection
     const user = getUserByEmail(email, usersDatabase);
     // Below checks the presence of a user account & whether pwd is correct
-    if (!user || !bcrypt.compareSync(password, user["password"])) {
-      res.status(403)
-        .send("invalid username or password");
-    } else {
-      // if username an pwd are correct;
+    if (user && bcrypt.compareSync(password, user.password)) {
+      // if username and pwd are correct then redirects;
       req.session.user_id = user.id;
-      // res.cookie("user_id", user.id); // old code to be deleted after encoded cookies
       res.redirect("/urls");
+    } else {
+      res.status(403)
+      .send("invalid username or password");
     }
+  } else {
+    res.status(400)
+      .send("Please enter details");
   }
 });
-
 
 
 app.get("/", (req, res) => {

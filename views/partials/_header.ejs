@@ -10,13 +10,9 @@
         <a class="nav-item nav-link" href="/urls">My URLs</a>
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
     </div>
-    <!--   If cookie(user_id) === DO NOT KNOW  ======== -->
-    <!-- Then do not disply the next -->
-    <!-- if email === null, you want to show them login/ register-->
-    <!-- login page is givig an error user not defined -->
-    <% if (user !== undefined) { %> <!--  What to change this to?  -->
+    <% if (user !== undefined) { %>
       <div>
-        <p>Logged in as; <%= user.email %> </p><!--Changed this to the unique email -->
+        <p>Logged in as; <%= user.email %> </p>
         <form action="/logout" method="POST" class="form-example">
           <div class="form-example" style="float:right">
             <label for="name"></label>
@@ -28,7 +24,6 @@
       </div>
       <% } else { %>
       
-        <!--  -->
         <form action="/register" method ="GET">
           <button class="favorite styled" type="submit">
             Register
