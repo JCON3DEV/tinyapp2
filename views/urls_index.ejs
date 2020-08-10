@@ -45,7 +45,7 @@
           <tr>
             <!-- the below hyperlink is the website url using interpolation from ejs -->
             <td><a href= "urls/<%= shortURL %> " ><%= shortURL %></a></td>
-            <td><%= urls[shortURL] %></td>
+            <td><%= urls[shortURL].longURL %></td>
             <td>
               <div class="form-example">
                 <form method="GET" action="/urls/<%= shortURL %>/edit">
