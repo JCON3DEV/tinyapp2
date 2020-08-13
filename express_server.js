@@ -66,7 +66,7 @@ app.post('/urls/:shortURL/delete', (req, res) => {
   res.redirect('/urls/');
 });
 
-//Edit function 
+//Edit function
 app.get('/urls/:shortURL/edit', (req,res) =>{
   res.redirect(`/urls/${req.params.shortURL}`);
 });
@@ -195,7 +195,7 @@ app.get("/login", (req, res) => {
   res.render("login", objVar);
 });
 
-// logout method 
+// logout method
 app.post("/logout", (req, res) => {
   req.session = null;
   res.redirect("/urls");
@@ -218,7 +218,7 @@ app.post("/login", (req, res) =>{
       res.redirect("/urls");
     } else {
       res.status(403)
-      .send("invalid username or password");
+        .send("invalid username or password");
     }
   } else {
     res.status(400)
