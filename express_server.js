@@ -3,9 +3,9 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const cookieSesssion = require('cookie-session');
 const bcrypt = require('bcrypt');
-const { generateRandomString } = require('./helpers');
-const { getUserByEmail } = require('./helpers');
-const { urlsForUser } = require('./helpers');
+const { generateRandomString } = require('./functions/helpers');
+const { getUserByEmail } = require('./functions/helpers');
+const { urlsForUser } = require('./functions/helpers');
 const salt = bcrypt.genSaltSync(10);
 const app = express();
 const PORT = 8080;
@@ -227,7 +227,7 @@ app.post("/login", (req, res) =>{
 
 
 app.get("/", (req, res) => {
-  res.send("Bonjour!");
+  res.redirect("/urls");
 });
 
 
