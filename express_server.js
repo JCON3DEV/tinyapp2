@@ -58,7 +58,6 @@ app.post('/urls/:shortURL/delete', (req, res) => {
   const id = req.session["user_id"];
   if (url.userID !== id) {
     console.log("invalid user trying to delete");
-    // poss give error mesage instead
     res.redirect("/urls");
     return;
   }

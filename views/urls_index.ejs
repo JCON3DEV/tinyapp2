@@ -14,19 +14,6 @@
 <body>
   <header>
     <%- include("./partials/_header.ejs") %>
-    <!-- <nav class="navbar navbar-expand-md navbar-dark bg-success">
-      <a class="navbar-brand" href="/urls">TinyApp</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
-        aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-        <div class="navbar-nav">
-          <a class="nav-item nav-link" href="/urls">My URLs</a>
-          <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
-        </div>
-      </div>
-    </nav> -->
   </header>
   
   <main style="margin: 1em;">
@@ -39,11 +26,8 @@
         </tr>
       </thead>
       <tbody>
-        
-        
         <% for(let shortURL in urls) { %>
           <tr>
-            <!-- the below hyperlink is the website url using interpolation from ejs -->
             <td><a href= "urls/<%= shortURL %> " ><%= shortURL %></a></td>
             <td><%= urls[shortURL].longURL %></td>
             <td>
@@ -53,7 +37,6 @@
                     edit
                   </button>
                 </form>
-                <!-- <input type="text" name="name" id="name" required> -->
               </div>
             </td>
             <td>
@@ -63,7 +46,6 @@
                   Delete
                   </button>
                 </form>
-              <!-- <input type="text" name="name" id="name" required> -->
             </div>            
             </td>
         </tr>
