@@ -6,10 +6,7 @@ const generateRandomString = function(length, arr) {
     ans += arr[Math.floor(Math.random() * arr.length)];
   }
   return ans;
-  // alternativly below;
-  // let ans = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 };
-//console.log(generateRandomString(6, arr));
 
 module.exports = {
   generateRandomString,
