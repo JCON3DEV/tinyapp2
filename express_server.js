@@ -47,7 +47,7 @@ const usersDatabase = {
 
 // ===================  Page structure =====================
 
-//Delte method  // NEEDS fixing
+//Delte method
 app.post('/urls/:shortURL/delete', (req, res) => {
   const shortURL = req.params.shortURL;
   const url = urlDatabase[shortURL];
@@ -56,8 +56,8 @@ app.post('/urls/:shortURL/delete', (req, res) => {
     return;
   }
   const id = req.session["user_id"];
+  // will redirect if different user tries to delete
   if (url.userID !== id) {
-    // Below needs correcting ; Cannot GET /urls/apwslx/delete
     res.redirect("/unauthorized");
     return;
   }
@@ -71,10 +71,8 @@ app.get('/urls/:shortURL/edit', (req,res) =>{
 });
 
 app.post(`/urls/:shortURL/edit`, (req, res) => {
-  const shortId = req.params.shortURL; 
+  const shortId = req.params.shortURL;
   const newLongId = req.body.longURL;
-  console.log("short id; ", shortId);
-  console.log("newLongID", newLongId );
   
   if (req.session["user_id"] !== urlDatabase[shortId]["userID"]) {
     res.redirect("/urls");
@@ -85,7 +83,6 @@ app.post(`/urls/:shortURL/edit`, (req, res) => {
 });
 
 
-
 //Adding a new get route to allow a form submission
 app.get("/urls/new", (req, res) => {
   let user_id = req.session["user_id"];
@@ -94,7 +91,6 @@ app.get("/urls/new", (req, res) => {
     res.redirect("/login");
     return;
   }
-
   let templateVars = {
     user,
   };
@@ -112,14 +108,12 @@ app.get("/u/:shortURL", (req, res) => {
 app.get("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
   let user_id = req.session["user_id"];
+  // If there is no user redirect to login page
   if (!user_id) {
     res.redirect("/login");
   }
-  console.log("urlDatabase[shortURL]; ", urlDatabase[shortURL]);
-  console.log("user_id", user_id);
   let visitor = urlDatabase[shortURL]["userID"];
-  console.log("visitor", visitor);
-  // Below will redirect to the unauthorized page if iuncorrect user tries to gain access
+  // Will redirect to the unauthorized page if incorrect user tries to access
   if (visitor !== user_id) {
     res.redirect("/unauthorized");
   }
