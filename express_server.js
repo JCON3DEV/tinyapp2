@@ -3,9 +3,9 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const cookieSesssion = require('cookie-session');
 const bcrypt = require('bcrypt');
-const { generateRandomString } = require('./helpers');
-const { getUserByEmail } = require('./helpers');
-const { urlsForUser } = require('./helpers');
+const { generateRandomString } = require('./functions/helpers');
+const { getUserByEmail } = require('./functions/helpers');
+const { urlsForUser } = require('./functions/helpers');
 const salt = bcrypt.genSaltSync(10);
 const app = express();
 const PORT = 8080;
@@ -56,10 +56,9 @@ app.post('/urls/:shortURL/delete', (req, res) => {
     return;
   }
   const id = req.session["user_id"];
+  // will redirect if different user tries to delete
   if (url.userID !== id) {
-    console.log("invalid user trying to delete");
-    // poss give error mesage instead
-    res.redirect("/urls");
+    res.redirect("/unauthorized");
     return;
   }
   delete urlDatabase[shortURL];
@@ -75,14 +74,13 @@ app.post(`/urls/:shortURL/edit`, (req, res) => {
   const shortId = req.params.shortURL;
   const newLongId = req.body.longURL;
   
-  if (req.session["user_id"] !== req.params.shortURL) {
+  if (req.session["user_id"] !== urlDatabase[shortId]["userID"]) {
     res.redirect("/urls");
     return;
   }
   urlDatabase[shortId]["longURL"] = newLongId;
   res.redirect('/urls');
 });
-
 
 
 //Adding a new get route to allow a form submission
@@ -93,7 +91,6 @@ app.get("/urls/new", (req, res) => {
     res.redirect("/login");
     return;
   }
-
   let templateVars = {
     user,
   };
@@ -111,7 +108,17 @@ app.get("/u/:shortURL", (req, res) => {
 app.get("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
   let user_id = req.session["user_id"];
+  // If there is no user redirect to login page
+  if (!user_id) {
+    res.redirect("/login");
+  }
+  let visitor = urlDatabase[shortURL]["userID"];
+  // Will redirect to the unauthorized page if incorrect user tries to access
+  if (visitor !== user_id) {
+    res.redirect("/unauthorized");
+  }
   let user = usersDatabase[user_id];
+ 
   const templateVars = {
     user,
     longURL: urlDatabase[shortURL]["longURL"],
@@ -126,7 +133,7 @@ app.get("/urls", (req, res) => {
   let user = usersDatabase[user_id];
   // Below blocks access if the user is not logged in;
   if (!user) {
-    res.redirect("/login");
+    res.redirect("/unauthorized");
     return;
   }
   const tempUrlsForUser = urlsForUser(user_id, urlDatabase);
@@ -135,6 +142,11 @@ app.get("/urls", (req, res) => {
     urls: tempUrlsForUser,
   };
   res.render("urls_index", templateVars);
+});
+
+// below redirects to the error page if unauthorized access occurs
+app.get("/unauthorized", (req, res) => {
+  res.render("unauthorized");
 });
 
 // Below accepts the form from /urls/new
@@ -198,7 +210,7 @@ app.get("/login", (req, res) => {
 // logout method
 app.post("/logout", (req, res) => {
   req.session = null;
-  res.redirect("/urls");
+  res.redirect("/login");
 });
 
 // login user method
@@ -228,7 +240,7 @@ app.post("/login", (req, res) =>{
 
 
 app.get("/", (req, res) => {
-  res.send("Bonjour!");
+  res.redirect("/urls");
 });
 
 

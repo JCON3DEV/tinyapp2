@@ -15,23 +15,15 @@
 <body>
 
   <header>
-    <%- include("./partials/_header.ejs") %>
   </header>
 
   <main style="margin: 1em;">
-    <h3>Registration</h3>
-        <form action="/register" method="POST">
-          <div>
-            <label for="name">email</label>
-            <input type="email" name="email" id="name" placeholder= "madeupemail.com" required>
-          </div>
-          <div>
-            <label for="name">password</label>
-            <input type="password" name="password" id="name" placeholder = "not Password123" required>
-          </div>
-          <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
-      </div>
+    <h3>Unauthorized Action</h3>
+    <form action="/login" method="GET">
+      
+      <button type="submit" class="btn btn-primary">To Login Page</button>
+    </form>
+    </div>
   </main>
   <!-- Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
