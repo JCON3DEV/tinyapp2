@@ -119,9 +119,8 @@ app.get("/urls/:shortURL", (req, res) => {
   console.log("user_id", user_id);
   let visitor = urlDatabase[shortURL]["userID"];
   console.log("visitor", visitor);
-  // CONFIRM THIS #####################
+  // Below will redirect to the unauthorized page if iuncorrect user tries to gain access
   if (visitor !== user_id) {
-
     res.redirect("/unauthorized");
   }
   let user = usersDatabase[user_id];
@@ -140,7 +139,6 @@ app.get("/urls", (req, res) => {
   let user = usersDatabase[user_id];
   // Below blocks access if the user is not logged in;
   if (!user) {
-    // redirect to error page
     res.redirect("/unauthorized");
     return;
   }
@@ -150,6 +148,11 @@ app.get("/urls", (req, res) => {
     urls: tempUrlsForUser,
   };
   res.render("urls_index", templateVars);
+});
+
+// below redirects to the error page if unauthorized access occurs
+app.get("/unauthorized", (req, res) => {
+  res.render("unauthorized");
 });
 
 // Below accepts the form from /urls/new
