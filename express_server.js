@@ -47,7 +47,7 @@ const usersDatabase = {
 
 // ===================  Page structure =====================
 
-//Delte method
+//Delte method  // NEEDS fixing
 app.post('/urls/:shortURL/delete', (req, res) => {
   const shortURL = req.params.shortURL;
   const url = urlDatabase[shortURL];
@@ -57,8 +57,8 @@ app.post('/urls/:shortURL/delete', (req, res) => {
   }
   const id = req.session["user_id"];
   if (url.userID !== id) {
-    console.log("invalid user trying to delete");
-    res.redirect("/urls");
+    // Below needs correcting ; Cannot GET /urls/apwslx/delete
+    res.redirect("/unauthorized");
     return;
   }
   delete urlDatabase[shortURL];
@@ -71,10 +71,12 @@ app.get('/urls/:shortURL/edit', (req,res) =>{
 });
 
 app.post(`/urls/:shortURL/edit`, (req, res) => {
-  const shortId = req.params.shortURL;
+  const shortId = req.params.shortURL; 
   const newLongId = req.body.longURL;
+  console.log("short id; ", shortId);
+  console.log("newLongID", newLongId );
   
-  if (req.session["user_id"] !== req.params.shortURL) {
+  if (req.session["user_id"] !== urlDatabase[shortId]["userID"]) {
     res.redirect("/urls");
     return;
   }
@@ -110,7 +112,20 @@ app.get("/u/:shortURL", (req, res) => {
 app.get("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
   let user_id = req.session["user_id"];
+  if (!user_id) {
+    res.redirect("/login");
+  }
+  console.log("urlDatabase[shortURL]; ", urlDatabase[shortURL]);
+  console.log("user_id", user_id);
+  let visitor = urlDatabase[shortURL]["userID"];
+  console.log("visitor", visitor);
+  // CONFIRM THIS #####################
+  if (visitor !== user_id) {
+
+    res.redirect("/unauthorized");
+  }
   let user = usersDatabase[user_id];
+ 
   const templateVars = {
     user,
     longURL: urlDatabase[shortURL]["longURL"],
@@ -125,7 +140,8 @@ app.get("/urls", (req, res) => {
   let user = usersDatabase[user_id];
   // Below blocks access if the user is not logged in;
   if (!user) {
-    res.redirect("/login");
+    // redirect to error page
+    res.redirect("/unauthorized");
     return;
   }
   const tempUrlsForUser = urlsForUser(user_id, urlDatabase);
@@ -197,7 +213,7 @@ app.get("/login", (req, res) => {
 // logout method
 app.post("/logout", (req, res) => {
   req.session = null;
-  res.redirect("/urls");
+  res.redirect("/login");
 });
 
 // login user method
